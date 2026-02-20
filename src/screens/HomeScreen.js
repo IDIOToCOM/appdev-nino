@@ -32,7 +32,7 @@ const HomeScreen = () => {
       >
         <View
           style={{
-            backgroundColor: 'red',
+            backgroundColor: 'black',
             padding: 10,
             borderRadius: 20,
           }}
