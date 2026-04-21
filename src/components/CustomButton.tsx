@@ -1,6 +1,14 @@
-import { Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { Text, TouchableOpacity, View, type TextStyle, type ViewStyle } from 'react-native';
 
-const CustomButton = ({ containerStyle, textStyle, label, onPress }) => {
+type Props = {
+  containerStyle?: ViewStyle;
+  textStyle?: TextStyle;
+  label: string;
+  onPress?: () => void;
+};
+
+const CustomButton = ({ containerStyle, textStyle, label, onPress }: Props) => {
   return (
     <View style={containerStyle}>
       <TouchableOpacity onPress={onPress}>

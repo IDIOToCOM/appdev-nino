@@ -12,10 +12,36 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle")
+        classpath("com.android.tools.build:gradle:8.1.1")
         classpath("com.facebook.react:react-native-gradle-plugin")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        
+        // Add all possible repositories that might have the dependency
+        maven {
+            url "https://repo1.maven.org/maven2/"
+        }
+        maven {
+            url "https://jitpack.io"
+        }
+        maven {
+            url "https://android-sdk.is.com/"
+        }
+        maven {
+            url "https://www.jitpack.io"
+        }
+        
+        // Add this specific repository for async-storage
+        maven {
+            url "https://storage.googleapis.com/download.flutter.io"
+        }
+    }
+}

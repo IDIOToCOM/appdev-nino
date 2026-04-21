@@ -1,11 +1,12 @@
+import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ROUTES } from '../utils';
 
-// screens
 import Login from '../screens/auth/Login';
 import Register from '../screens/auth/Register';
+import WrongScreen from '../screens/WrongScreen';
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<any>();
 
 const AuthNavigation = () => {
   return (
@@ -18,6 +19,7 @@ const AuthNavigation = () => {
         }}
       />
       <Stack.Screen name={ROUTES.REGISTER} component={Register} />
+      <Stack.Screen name={ROUTES.WRONG} component={WrongScreen} />
     </Stack.Navigator>
   );
 };

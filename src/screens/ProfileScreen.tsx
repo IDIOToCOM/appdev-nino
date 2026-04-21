@@ -1,5 +1,7 @@
+import React from 'react';
 import { Image, Text, View } from 'react-native';
 import { IMG } from '../utils';
+
 const ProfileScreen = () => {
   return (
     <View
@@ -11,12 +13,7 @@ const ProfileScreen = () => {
         borderColor: 'blue',
       }}
     >
-      <Image
-        source={{
-          uri: IMG.LOGO2,
-        }}
-        style={{ width: 200, height: 200 }}
-      />
+      <Image source={{ uri: IMG.LOGO2 }} style={{ width: 200, height: 200 }} />
       <Text style={{ fontSize: 40 }}>ProfileScreen</Text>
     </View>
   );

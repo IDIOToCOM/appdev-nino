@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Alert, Text, TouchableOpacity, View } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
@@ -11,33 +11,22 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   const handleRegister = () => {
     if (emailAdd === '' || password === '' || confirmPassword === '') {
-      Alert.alert(
-        'Invalid Credentials',
-        'Please fill in all fields',
-      );
+      Alert.alert('Invalid Credentials', 'Please fill in all fields');
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert(
-        'Password Mismatch',
-        'Passwords do not match',
-      );
+      Alert.alert('Password Mismatch', 'Passwords do not match');
       return;
     }
 
-    // Add your registration logic here
-    Alert.alert(
-      'Success',
-      'Registration successful!',
-      [
-        { text: 'OK', onPress: () => navigation.navigate(ROUTES.LOGIN) }
-      ]
-    );
+    Alert.alert('Success', 'Registration successful!', [
+      { text: 'OK', onPress: () => navigation.navigate(ROUTES.LOGIN) },
+    ]);
   };
 
   return (
@@ -51,12 +40,11 @@ const Register = () => {
     >
       <View style={{ width: '100%' }}>
         <CustomTextInput
-          label={'Email Address'}
-          placeholder={'Enter Email Address'}
-          value={val => setEmailAdd(val)}
-          containerStyle={{
-            padding: 5,
-          }}
+          label="Email Address"
+          placeholder="Enter Email Address"
+          value={emailAdd}
+          onChangeText={setEmailAdd}
+          containerStyle={{ padding: 5 }}
           textStyle={{
             borderRadius: 10,
             color: 'black',
@@ -64,30 +52,28 @@ const Register = () => {
             fontWeight: 'bold',
           }}
         />
-        
+
         <CustomTextInput
-          label={'Password'}
-          placeholder={'Enter Password'}
-          value={val => setPassword(val)}
-          secureTextEntry={true}
-          containerStyle={{
-            padding: 5,
-          }}
+          label="Password"
+          placeholder="Enter Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          containerStyle={{ padding: 5 }}
           textStyle={{
             borderRadius: 10,
             color: 'black',
             marginLeft: 10,
           }}
         />
-        
+
         <CustomTextInput
-          label={'Confirm Password'}
-          placeholder={'Re-enter Password'}
-          value={val => setConfirmPassword(val)}
-          secureTextEntry={true}
-          containerStyle={{
-            padding: 5,
-          }}
+          label="Confirm Password"
+          placeholder="Re-enter Password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry
+          containerStyle={{ padding: 5 }}
           textStyle={{
             borderRadius: 10,
             color: 'black',
@@ -97,7 +83,7 @@ const Register = () => {
       </View>
 
       <CustomButton
-        label={'REGISTER'}
+        label="REGISTER"
         containerStyle={{
           backgroundColor: 'green',
           borderRadius: 10,
