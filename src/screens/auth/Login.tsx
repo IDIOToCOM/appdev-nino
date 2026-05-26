@@ -1,12 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 
-import CustomButton from '../../components/CustomButton';
-import CustomTextInput from '../../components/CustomTextInput';
-import { IMG, ROUTES } from '../../utils';
-import { authLogin } from '../../app/action';
+import { authLogin, authLoginGoogle, clearAuthError } from '../../app/action';
+import type { RootState } from '../../app/reducers';
+import {
+  GoogleSignInButton,
+  ScreenBackground,
+  UtoButton,
+  UtoLogo,
+  UtoTextInput,
+} from '../../components/uto';
+import { SHOW_GOOGLE_SIGN_IN_UI } from '../../config/google';
+import { UTO } from '../../theme/uto';
+import { ROUTES } from '../../utils';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -14,102 +22,137 @@ const Login = () => {
 
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<any>();
-  const auth = useSelector((state: any) => state.auth);
+  const auth = useSelector((state: RootState) => state.auth);
+  const loginAttempted = useRef(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(clearAuthError());
+      loginAttempted.current = false;
+    }, [dispatch]),
+  );
 
   useEffect(() => {
-    if (!auth.isLoading && auth.isError && auth.error) {
-      navigation.navigate(ROUTES.WRONG);
+    if (auth.isLoading) {
+      loginAttempted.current = true;
+    }
+  }, [auth.isLoading]);
+
+  useEffect(() => {
+    if (
+      loginAttempted.current &&
+      !auth.isLoading &&
+      auth.isError &&
+      auth.error
+    ) {
+      loginAttempted.current = false;
+      navigation.navigate(ROUTES.WRONG, { message: auth.error });
     }
   }, [auth.isLoading, auth.isError, auth.error, navigation]);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        padding: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <Image
-        source={{ uri: IMG.LOGO }}
-        style={{ width: 240, height: 80, marginBottom: 40 }}
-        resizeMode="contain"
-      />
+    <ScreenBackground scroll centered contentStyle={styles.content}>
+      <UtoLogo width={200} height={56} style={styles.logo} />
 
-      <View style={{ width: '100%' }}>
-        <CustomTextInput
-          label="Username"
-          placeholder="Enter Username"
+      <Text style={styles.subtitle}>Sign in to browse and book vehicles</Text>
+
+      {SHOW_GOOGLE_SIGN_IN_UI ? (
+        <>
+          <GoogleSignInButton
+            disabled={auth.isLoading}
+            onIdToken={idToken => dispatch(authLoginGoogle(idToken))}
+            onError={message => Alert.alert('Google sign-in', message)}
+          />
+          <Text style={styles.divider}>or sign in with username</Text>
+        </>
+      ) : null}
+
+      <View style={styles.form}>
+        <UtoTextInput
+          label="Username or email"
+          placeholder="Username or email"
           value={username}
           onChangeText={setUsername}
-          containerStyle={{ padding: 5 }}
-          textStyle={{
-            borderRadius: 10,
-            color: 'black',
-            marginLeft: 10,
-            fontWeight: 'bold',
-          }}
+          autoCapitalize="none"
+          autoCorrect={false}
+          keyboardType="email-address"
         />
-        <CustomTextInput
+        <UtoTextInput
           label="Password"
-          placeholder="Enter Password"
+          placeholder="Enter password"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          containerStyle={{ padding: 5 }}
-          textStyle={{
-            borderRadius: 10,
-            color: 'black',
-            marginLeft: 10,
-            fontWeight: 'bold',
-          }}
         />
       </View>
 
-      <CustomButton
-        label="LOGIN"
-        containerStyle={{
-          backgroundColor: '#13ae0e',
-          borderRadius: 10,
-          marginVertical: 20,
-          width: '85%',
-        }}
-        textStyle={{
-          color: 'white',
-          fontWeight: 'bold',
-        }}
+      <UtoButton
+        label="Sign in"
+        loading={auth.isLoading}
         onPress={() => {
           if (username === '' || password === '') {
-            navigation.navigate(ROUTES.WRONG);
+            navigation.navigate(ROUTES.WRONG, {
+              message: 'Please enter your username or email and password.',
+            });
             return;
           }
-
-          dispatch(
-            authLogin({
-              username,
-              password,
-            }),
-          );
+          dispatch(authLogin({ username, password }));
         }}
       />
 
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Text>Create an account?</Text>
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>Create an account?</Text>
         <TouchableOpacity onPress={() => navigation.navigate(ROUTES.REGISTER)}>
-          <Text style={{ color: 'green', marginLeft: 5, fontWeight: 'bold' }}>
-            Register
-          </Text>
+          <Text style={styles.link}>Register</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScreenBackground>
   );
 };
+
+const styles = StyleSheet.create({
+  content: {
+    justifyContent: 'center',
+    maxWidth: 400,
+    alignSelf: 'center',
+    width: '100%',
+  },
+  logo: {
+    marginBottom: 24,
+  },
+  subtitle: {
+    textAlign: 'center',
+    color: UTO.muted,
+    fontSize: 15,
+    marginBottom: 12,
+    lineHeight: 22,
+  },
+  divider: {
+    textAlign: 'center',
+    color: UTO.muted,
+    fontSize: 14,
+    marginBottom: 16,
+  },
+  form: {
+    width: '100%',
+    marginBottom: 8,
+  },
+  footer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 24,
+  },
+  footerText: {
+    color: UTO.textBody,
+    fontSize: 15,
+  },
+  link: {
+    color: UTO.navy,
+    fontWeight: '700',
+    marginLeft: 6,
+    fontSize: 15,
+  },
+});
 
 export default Login;

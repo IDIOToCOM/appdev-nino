@@ -9,7 +9,7 @@ import MainNav from './MainNav';
 const AppNav = () => {
   const isDarkMode = useColorScheme() === 'dark';
   const auth = useSelector((state: any) => state.auth);
-  const isLoggedIn = !!auth?.data;
+  const isLoggedIn = !!auth?.data?.token;
 
   useEffect(() => {
     if (Platform.OS === 'android') {

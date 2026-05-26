@@ -1,5 +1,21 @@
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
+# Uto Mobility backend (SAMSON)
+
+SAMSON connects to the **Uto Mobility** Symfony API (separate repo). The backend owns MySQL; the app does not store cars or bookings locally.
+
+1. Start backend: `symfony serve` (port **8000**).
+2. Run Android emulator: default API host is **`http://10.0.2.2:8000`** (`src/config/api.ts`).
+3. Flow: login → home (health) → browse vehicles → detail.
+
+**Physical device:** set `API_BASE_URL` in `src/config/api.ts` to your PC LAN IP, or use `adb reverse tcp:8000 tcp:8000`.
+
+Full endpoint reference, samples, and test notes: **[docs/API.md](docs/API.md)**.
+
+Customer UI matches the Symfony website (logo header, menu, catalog, booking form): **[docs/UI.md](docs/UI.md)**.
+
+Mobile booking: **[docs/SYMFONY_MOBILE_BOOKING.md](docs/SYMFONY_MOBILE_BOOKING.md)** (requires `symfony serve` + JWT login).
+
 # Getting Started
 
 > **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.

@@ -1,3 +1,4 @@
+const path = require('path');
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 
 /**
@@ -6,6 +7,24 @@ const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
  *
  * @type {import('@react-native/metro-config').MetroConfig}
  */
-const config = {};
+const projectRoot = __dirname;
+const defaultConfig = getDefaultConfig(projectRoot);
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+const config = {
+  watchFolders: [path.resolve(projectRoot, 'node_modules')],
+  resolver: {
+    ...defaultConfig.resolver,
+    // Ignore Gradle/C++ output - Metro must not watch folders that clean/build deletes.
+    blockList: [
+      /[\\/]android[\\/]app[\\/]build[\\/].*/,
+      /[\\/]android[\\/]build[\\/].*/,
+      /[\\/]android[\\/]\.gradle[\\/].*/,
+      /[\\/]\.cxx[\\/].*/,
+      /[\\/]node_modules[\\/].*[\\/]android[\\/]build[\\/].*/,
+      /[\\/]node_modules[\\/].*[\\/]android[\\/]\.cxx[\\/].*/,
+    ],
+    nodeModulesPaths: [path.resolve(projectRoot, 'node_modules')],
+  },
+};
+
+module.exports = mergeConfig(defaultConfig, config);

@@ -1,4 +1,6 @@
+import type { AuthSession } from '../api/auth';
 import {
+  CLEAR_AUTH_ERROR,
   RESET_USER_LOGIN,
   USER_LOGIN_COMPLETE,
   USER_LOGIN_ERROR,
@@ -6,7 +8,7 @@ import {
 } from '../action';
 
 export type AuthState = {
-  data: any;
+  data: AuthSession | null;
   isLoading: boolean;
   isError: boolean;
   error: string | null;
@@ -51,8 +53,15 @@ export default function reducer(state: AuthState = INITIALSTATE, action: any) {
     case RESET_USER_LOGIN:
       return INITIALSTATE;
 
+    case CLEAR_AUTH_ERROR:
+      return {
+        ...state,
+        isError: false,
+        error: null,
+        isLoading: false,
+      };
+
     default:
       return state;
   }
 }
-
